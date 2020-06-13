@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
-using UnityEngine.UI;
+
 
 public class Player : MonoBehaviour
 
@@ -22,8 +22,8 @@ public class Player : MonoBehaviour
     float coolDownAttack;
     public float timeForDie = 5f;
     public bool IsAlive = true;
-    public Text damageText;
 
+    string danoFlutuante;
     int damageConverter;
     bool Jumping = false;
     bool inFloor = false;
@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
         }
 
         damageConverter = damage * -1;
-        damageText.text = damageConverter.ToString();
+        danoFlutuante = damageConverter.ToString();
         
         timeForDie -= Time.deltaTime;
         Animation();
@@ -124,6 +124,7 @@ public class Player : MonoBehaviour
         {
 
             print(enemiesAttack[i].name);
+            enemiesAttack[i].SendMessage("PlayerHit", danoFlutuante);
         }
     }
     private void OnDrawGizmosSelected()
