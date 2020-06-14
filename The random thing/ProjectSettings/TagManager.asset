@@ -41,3 +41,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: background
+    uniqueID: 1462424293
+    locked: 0
+  - name: iten
+    uniqueID: 1439789487
+    locked: 0
+  - name: inimigo
+    uniqueID: 1170712985
+    locked: 0
+  - name: player
+    uniqueID: 741984875
+    locked: 0
