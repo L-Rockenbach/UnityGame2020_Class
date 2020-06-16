@@ -2,26 +2,36 @@
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 
 public class Player : MonoBehaviour
 
-{   [Header("Movement variables")]
+{
+    private float gravidade;
+    private float velocidadePulo;
+
+    public float alturaPulo = 4f;
+    public float tempoParaApicePulo = 0.4f;
+
+
+    [Header("Movement variables")]
     public float speed = 10f;
     public float radius = 0.2f;
     public float jumpForce = 200f;
     public LayerMask groundMask;
     public int maximumLife = 3;
-    public int atualLife;
+    
 
     [Header("Attack variables")]
     public int damage = 10;
     public Transform attackCheck;
     public float radiusAttack;
     public LayerMask Enemy;
+    public LayerMask FallLimit;
     float coolDownAttack;
-    public float timeForDie = 5f;
-    public bool IsAlive = true;
+    public float timeForDie = 3f;
+    //public bool IsAlive = true;
 
     string danoFlutuante;
     int damageConverter;
@@ -38,6 +48,9 @@ public class Player : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
 
+        gravidade = -(alturaPulo * 2) / Mathf.Pow(tempoParaApicePulo, 2);
+        velocidadePulo = Mathf.Abs(gravidade) * tempoParaApicePulo;
+
         //damage = damage * -1;
 
     }
@@ -45,26 +58,47 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //if (!body.IsTouchingLayers())
+        //{
+        //    body.velocity = new Vector2(body.velocity.x, gravidade);
+        //}
 
         inFloor = body.IsTouchingLayers(groundMask);
         if (Input.GetButtonDown("Jump") && inFloor == true)
             Jumping = true;
-
-        if (body.IsTouchingLayers(Enemy))
-        {
-            if (timeForDie <= 0f)
-            {
-                atualLife -= maximumLife;
-                print("Dano");
-                timeForDie = 5f;
-            }
-        }
 
         damageConverter = damage * -1;
         danoFlutuante = damageConverter.ToString();
         
         timeForDie -= Time.deltaTime;
         Animation();
+        
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        print(collision.collider.name);
+        if (collision.collider.tag == "Enemy")
+        {
+            if (timeForDie <= 0f)
+            {
+                maximumLife -= 1;
+                print("Dano");
+                timeForDie = 3f;
+            }
+        }
+        if (collision.collider.tag == "WasWeKnowIt" || maximumLife == 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            print("Você morreu");
+            //Destroy(gameObject, 0.2f);
+        }
+        //if(collision.collider.tag == "Ground")
+        //{
+        //    inFloor = true;
+        //    if (Input.GetButtonDown("Jump") && inFloor == true)
+        //        Jumping = true;
+        //    print(Jumping);
+        //}
     }
 
     private void FixedUpdate()
@@ -125,6 +159,7 @@ public class Player : MonoBehaviour
 
             print(enemiesAttack[i].name);
             enemiesAttack[i].SendMessage("PlayerHit", danoFlutuante);
+            enemiesAttack[i].SendMessage("PlayerDamage", damage);
         }
     }
     private void OnDrawGizmosSelected()
@@ -132,5 +167,6 @@ public class Player : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackCheck.position, radiusAttack);
     }
+    
 
 }
