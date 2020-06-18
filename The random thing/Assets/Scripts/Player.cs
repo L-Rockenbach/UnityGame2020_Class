@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 
 public class Player : MonoBehaviour
 
 {
-    private float gravidade;
-    private float velocidadePulo;
+   // private float gravidade;
+   // private float velocidadePulo;
 
     public float alturaPulo = 4f;
     public float tempoParaApicePulo = 0.4f;
@@ -21,6 +22,8 @@ public class Player : MonoBehaviour
     public float jumpForce = 200f;
     public LayerMask groundMask;
     public int maximumLife = 3;
+    public Text coracaozinho;
+
     
 
     [Header("Attack variables")]
@@ -30,9 +33,10 @@ public class Player : MonoBehaviour
     public LayerMask Enemy;
     public LayerMask FallLimit;
     float coolDownAttack;
-    public float timeForDie = 3f;
-    //public bool IsAlive = true;
+    public float timeForDie = 1f;
+ 
 
+    string atualLife;
     string danoFlutuante;
     int damageConverter;
     bool Jumping = false;
@@ -48,20 +52,18 @@ public class Player : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
 
-        gravidade = -(alturaPulo * 2) / Mathf.Pow(tempoParaApicePulo, 2);
-        velocidadePulo = Mathf.Abs(gravidade) * tempoParaApicePulo;
-
-        //damage = damage * -1;
+        /*gravidade = -(alturaPulo * 2) / Mathf.Pow(tempoParaApicePulo, 2);
+        velocidadePulo = Mathf.Abs(gravidade) * tempoParaApicePulo;*/
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        //if (!body.IsTouchingLayers())
-        //{
-        //    body.velocity = new Vector2(body.velocity.x, gravidade);
-        //}
+        /*if (!body.IsTouchingLayers())
+        {
+            body.velocity = new Vector2(body.velocity.x, gravidade);
+        }*/
 
         inFloor = body.IsTouchingLayers(groundMask);
         if (Input.GetButtonDown("Jump") && inFloor == true)
@@ -82,8 +84,10 @@ public class Player : MonoBehaviour
             if (timeForDie <= 0f)
             {
                 maximumLife -= 1;
+                atualLife = maximumLife.ToString();
+                coracaozinho.text = atualLife;
                 print("Dano");
-                timeForDie = 3f;
+                timeForDie = 1f;
             }
         }
         if (collision.collider.tag == "WasWeKnowIt" || maximumLife == 0)
@@ -92,13 +96,13 @@ public class Player : MonoBehaviour
             print("Você morreu");
             //Destroy(gameObject, 0.2f);
         }
-        //if(collision.collider.tag == "Ground")
-        //{
-        //    inFloor = true;
-        //    if (Input.GetButtonDown("Jump") && inFloor == true)
-        //        Jumping = true;
-        //    print(Jumping);
-        //}
+       /* if(collision.collider.tag == "Ground")
+        {
+            inFloor = true;
+            if (Input.GetButtonDown("Jump") && inFloor == true)
+                Jumping = true;
+            print(Jumping);
+        }*/
     }
 
     private void FixedUpdate()
